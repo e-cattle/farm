@@ -3,6 +3,7 @@
 - [Estrutura de arquivos](#estrutura-de-arquivos)
 - [Descrição dos elementos](#descrição-dos-elementos)
 - [Funcionamento do repositório farm](#funcionamento-do-repositório-farm)
+- [Esquemático do repositório farm](#esquemático-do-repositório-farm)
 
 
 ## Sobre
@@ -39,3 +40,8 @@ O repositório farm é utilizado após o pedido de sincronização na nuvem real
 - Container com [NodeJS](https://nodejs.org/en/), utilizado para a aplicação "Portal Web" responsável pela disponibilização dos dados sincronizados na nuvem e gerenciamento dos BigBoxx vinculados à propriedade. O código da aplicação encontra-se no **repositório** **[web](#link-ecattle-github)**;
 - Container com [GraphQL](https://graphql.org/), utilizado para consulta das informações persistidas, é criado através do diretório **graphql** que replica o **repositório** **[query](https://github.com/e-cattle/query)**;
 - Container com [NodeJS](https://nodejs.org/en/), utilizado pelo  **repositório** **[kernel-bigboxx](https://github.com/e-cattle/kernel)**.
+
+
+## Esquemático do repositório farm
+
+<img src="esquematico-containers.png" alt="Esquemático do funcionamento do repositório farm">

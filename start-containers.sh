@@ -17,7 +17,7 @@ start_kernel() {
 # Clona repositório query (graphql), cria diretório query
 start_graphql() {
     if [ -d "query" ]; then
-        cd query && git pull
+        cd query && git pull && cd ..
     else
         git clone https://github.com/e-cattle/query.git
     fi
