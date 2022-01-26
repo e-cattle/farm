@@ -1,5 +1,5 @@
 const Agenda = require('agenda');
-const mongoConnectionString = 'mongodb+srv://admin:admin@clusterschedule.pqorz.mongodb.net/meubanco?retryWrites=true&w=majority';
+const mongoConnectionString = 'URL_MONGO';
 const agenda = new Agenda({ db: { address: mongoConnectionString, collection: 'schedulerJob' }});
 const { exec } = require('child_process');
 const MONGO_PORT = 50000;
