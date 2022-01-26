@@ -40,6 +40,10 @@ O repositório farm é responsável pelas instâncias das propriedades na nuvem 
 
 
 ## Funcionamento do repositório farm
+#### Pedido de sincronização
+Para que uma propriedade tenha seus dados sincronizados na nuvem, é preciso fazer a requisição através da tela "Sincronização" no *Middleware* BigBoxx, conforme figura abaixo.
+<img src="pedido-sincronizacao.png" alt="Esquemático do pedido de sincronização de dados em nuvem para uma propriedade rural ">
+
 Em breve com imagem
 <!--
 O repositório farm é utilizado após o pedido de sincronização na nuvem realizado no BigBoxx local. Assim que a sincronização é aprovada através da  **[Aplicação Gestora](#link-ecattle-github)**, o repositório farm recebe os parâmetros da propriedade necessários para criar sua instância na nuvem. A instância da nuvem consiste na criação de quatro containers, cada um responsável por um módulo do ambiente em nuvem. São eles:
