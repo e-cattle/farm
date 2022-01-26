@@ -40,11 +40,25 @@ O repositório farm é responsável pelas instâncias das propriedades na nuvem 
 
 
 ## Funcionamento do repositório farm
-#### Pedido de sincronização
-Para que uma propriedade tenha seus dados sincronizados na nuvem, é preciso fazer a requisição através da tela "Sincronização" no *Middleware* BigBoxx, conforme figura abaixo.
-<img src="pedido-sincronizacao.png" alt="Esquemático do pedido de sincronização de dados em nuvem para uma propriedade rural ">
 
-Em breve com imagem
+#### Pedido de sincronização
+
+Para que uma propriedade tenha seus dados sincronizados na nuvem, é preciso fazer a requisição através da tela "Sincronização" no *Middleware* BigBoxx, conforme figura abaixo.
+
+<figure>
+	<img src="pedido-sincronizacao.png" alt="Esquemático do pedido de sincronização de dados em nuvem para uma propriedade rural ">
+	<figcaption>Figura 1: Pedido de sincronização através do BigBoxx</figcaption>
+</figure>
+
+
+Explicação da Figura 1...
+
+
+
+#### Esquemático do repositório farm
+
+Em breve
+
 <!--
 O repositório farm é utilizado após o pedido de sincronização na nuvem realizado no BigBoxx local. Assim que a sincronização é aprovada através da  **[Aplicação Gestora](#link-ecattle-github)**, o repositório farm recebe os parâmetros da propriedade necessários para criar sua instância na nuvem. A instância da nuvem consiste na criação de quatro containers, cada um responsável por um módulo do ambiente em nuvem. São eles:
 - Container com o Banco de dados [MongoDB](https://www.mongodb.com/), utilizado para persistir os dados da propriedade na nuvem;
@@ -52,7 +66,3 @@ O repositório farm é utilizado após o pedido de sincronização na nuvem real
 - Container com [GraphQL](https://graphql.org/), utilizado para consulta das informações persistidas, é criado através do diretório **graphql** que replica o **repositório** **[query](https://github.com/e-cattle/query)**;
 - Container com [NodeJS](https://nodejs.org/en/), utilizado pelo  **repositório** **[kernel-bigboxx](https://github.com/e-cattle/kernel)**.
 -->
-
-## Esquemático do ambiente cloud
-Em breve
-<!--img src="esquematico-containers.png" alt="Esquemático do funcionamento do repositório farm"-->
