@@ -1,0 +1,38 @@
+version: '3.8'
+services:
+  scheduler:
+    image: ygobrito/node-scheduler:0.0.2
+    command: ["sh", "-c", "npm i & npm run start"]
+    volumes:
+      - bkp_yml_farms:/usr/src/app
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
+    networks:
+      - manager_network
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+  agendash:
+    image: agenda/agendash
+    environment: #ATUALIZAR URL MONGO
+      - MONGODB_URI=mongodb+srv://admin:admin@clusterschedule.pqorz.mongodb.net/meubanco?retryWrites=true&w=majority 
+      - COLLECTION=schedulerJob
+    ports:
+      - "2999:3000"
+    networks:
+      - manager_network
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+
+networks:
+  manager_network:
+    driver: overlay # para swarm
+    attachable: true # containers fora do swarm podem se conectar aos serviços
+
+volumes:
+  bkp_yml_farms:

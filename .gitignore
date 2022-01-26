@@ -1,4 +1,4 @@
-kernel/
-query/
 .env
 .vscode
+/scheduler-job/node_modules/
+
