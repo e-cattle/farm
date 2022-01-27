@@ -1,4 +1,5 @@
 .env
 .vscode
-/scheduler-job/node_modules/
+scheduler-job/node_modules/
 
+scheduler-job/package-lock.json
