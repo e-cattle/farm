@@ -22,9 +22,13 @@ services:
         constraints: [node.role == worker]
   ecattle-kernel:
     command: ["sh", "-c", "npm i & npm run start"]
-    image: "ygobrito/kernel-bigboxx:0.0.3"
+    image: "ygobrito/kernel-bigboxx:latest"
     ports:
       - "${KERNEL_PORT}:3000"
+    environment:
+      - DB_CLOUD=mongodb://ecattle-mongo/e-cattle
+      - REDIS_CLOUD=ecattle-redis
+      - API_CLOUD=ecattle-cloud
     deploy:
       replicas: 1
       restart_policy:

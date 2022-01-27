@@ -81,5 +81,7 @@ createCloudEnvironment();
 /* 
 TODO: 
   - Criar schedulerJob para verificar se tem update nas img do dockerhub "kernel-bigboxx" e "cloud" a cada X dias 
-  - Criar img de cloud e subir no dockerhub  
+  - Criar img de cloud e subir no dockerhub
+  - Ajustar img do kernel para apontar para Mongo, redis e API cloud da stack da farm que ele pertence
+  - AJustar Mongo do agenda (acima) e agendash (yml) 
 */

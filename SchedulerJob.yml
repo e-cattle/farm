@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   scheduler:
-    image: ygobrito/node-scheduler:0.0.2
+    image: ygobrito/node-scheduler:latest
     command: ["sh", "-c", "npm i & npm run start"]
     volumes:
       - bkp_yml_farms:/usr/src/app
