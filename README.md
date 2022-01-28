@@ -12,7 +12,7 @@ O repositório farm é responsável pelas instâncias das propriedades na nuvem 
 
 ### Termos comumente utilizados no projeto
 - *Job*: Uma tarefa agendada que é realizada a cada X segundos/minutos/dias;
-- *Service*: É como uma aplicação rodando em um container é chamada;
+- *Service*: É como uma aplicação rodando em um *container* é chamada;
 - *Stack*: É um conjunto de *services*.
 
 ## Estrutura de arquivos
@@ -26,13 +26,13 @@ O repositório farm é responsável pelas instâncias das propriedades na nuvem 
 
 ## Descrição dos elementos
 
-- **farm:dir**: Diretório raiz do repositório;
-- **scheduler-job:dir**:  A aplicação "scheduler-job" verifica quais são as propriedades novas que requerem sincronismo em nuvem, em seguida, cria a *stack* da propriedade rural;
-- **SchedulerJob.yml:file**: Arquivo responsável pela criação da *stack* SchedulerJob
+- **farm:dir**: Diretório raiz do repositório contendo código-fonte da aplicação *Scheduler Job* e arquivo *Compose* para criação da *stack* das novas propriedades;
+- **scheduler-job:dir**: A aplicação "scheduler-job" verifica quais são as propriedades novas que requerem sincronismo em nuvem, em seguida, cria a *stack* da propriedade rural;
+- **SchedulerJob.yml:file**: Arquivo para criação da *stack* SchedulerJob
 	- A *stack* SchedulerJob é formada pelos *services*:
 		- Aplicação em [NodeJS](https://nodejs.org/en/) intitulada "node-scheduler", reponsável por criar a *stack* de cada farm nova no ambiente *cloud*;
 		- Aplicação UI [Agendash](https://github.com/agenda/agendash) para gerenciamento dos "jobs";
-		- Cada propriedade terá em sua *stack cloud* os seguintes *services*:
+		- Cada propriedade terá sua *stack cloud* criada utilizando o *template* "DockerfileNewEnvironmentCloud.yml" e terá os seguintes *services*:
 			- Banco de dados não relacional [MongoDB](https://www.mongodb.com/);
 			- Aplicação em [NodeJS](https://nodejs.org/en/) utilizando informações do **repositório** **[web](#link-ecattle-github)**;
 			- Aplicação [GraphQL](https://graphql.org/) utilizando informações do diretório **graphql**;
