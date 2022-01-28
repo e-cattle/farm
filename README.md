@@ -46,7 +46,7 @@ O repositório farm é responsável pelas instâncias das propriedades na nuvem 
 Para que uma propriedade tenha seus dados sincronizados na nuvem, é preciso fazer a requisição através da tela "Sincronização" no *Middleware* BigBoxx, conforme figura abaixo.
 
 <figure>
-	<img src="pedido-sincronizacao.png" alt="Esquemático do pedido de sincronização de dados em nuvem para uma propriedade rural ">
+	<img src="assets-readme/pedido-sincronizacao.png" alt="Esquemático do pedido de sincronização de dados em nuvem para uma propriedade rural ">
 	<figcaption>Figura 1: Pedido de sincronização através do BigBoxx</figcaption>
 </figure>
 
@@ -66,3 +66,5 @@ O repositório farm é utilizado após o pedido de sincronização na nuvem real
 - Container com [GraphQL](https://graphql.org/), utilizado para consulta das informações persistidas, é criado através do diretório **graphql** que replica o **repositório** **[query](https://github.com/e-cattle/query)**;
 - Container com [NodeJS](https://nodejs.org/en/), utilizado pelo  **repositório** **[kernel-bigboxx](https://github.com/e-cattle/kernel)**.
 -->
+
+- Figuras criadas com [Draw IO](https://app.diagrams.net/)
