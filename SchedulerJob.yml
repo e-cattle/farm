@@ -1,5 +1,16 @@
 version: '3.8'
 services:
+  database:
+    image: mongo
+    ports:
+      - "27017:27017"
+    networks:
+      - manager_network
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
   scheduler:
     image: ygobrito/node-scheduler:latest
     command: ["sh", "-c", "npm i & npm run start"]
@@ -14,10 +25,63 @@ services:
       replicas: 1
       placement:
         constraints: [node.role == manager]
+  gestor-inquilinos:
+    image: ygobrito/gestor-inquilino:latest
+    environment:
+      - VUE_APP_CLOUD=http://api-cloud:${API_CLOUD_PORT}
+      - VUE_APP_GOOGLE=${GOOGLE_ID}
+      - VUE_APP_FACEBOOK=${FACEBOOK_ID}
+    command: ["sh", "-c", "npm i & npm run serve"]
+    ports:
+      - "8080:8080"
+    networks:
+      - manager_network
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+  portal-web:
+    image: ygobrito/portal-web:latest
+    environment:
+      - VUE_APP_CLOUD=http://api-cloud:${API_CLOUD_PORT}
+      - VUE_APP_GOOGLE=${GOOGLE_ID}
+      - VUE_APP_FACEBOOK=${FACEBOOK_ID}
+    command: ["sh", "-c", "npm i & npm run serve"]
+    ports:
+      - "8081:8080"
+    networks:
+      - manager_network
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+  api-cloud:
+    image: ygobrito/cloud-api:latest
+    environment:
+      - NODE_ENV=development 
+      - NODE_PORT=${API_CLOUD_PORT}
+      - MONGO_PORT=27017
+      - JWT_SECRET=${JWT_SECRET}
+      - FACEBOOK_ID=${FACEBOOK_ID}
+      - FACEBOOK_SECRET=${FACEBOOK_SECRET}
+      - GOOGLE_ID=${GOOGLE_ID}
+      - GOOGLE_SECRET=${GOOGLE_SECRET}
+    command: ["sh", "-c", "npm i & npm run start"]
+    ports:
+      - "9080:3000"
+    networks:
+      - manager_network
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
   agendash:
     image: agenda/agendash
-    environment: #ATUALIZAR URL MONGO
-      - MONGODB_URI=mongodb+srv://admin:admin@clusterschedule.pqorz.mongodb.net/meubanco?retryWrites=true&w=majority 
+    environment:
+      - MONGODB_URI=mongodb://database:27017 
       - COLLECTION=schedulerJob
     ports:
       - "2999:3000"
