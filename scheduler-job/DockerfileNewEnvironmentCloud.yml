@@ -22,7 +22,7 @@ services:
         constraints: [node.role == worker]
   ecattle-kernel:
     command: ["sh", "-c", "npm i & npm run start"]
-    image: "ygobrito/kernel-bigboxx:latest"
+    image: "ecattle/kernel-bigboxx:latest"
     ports:
       - "${KERNEL_PORT}:3000"
     environment:

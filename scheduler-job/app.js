@@ -6,6 +6,7 @@ const { exec } = require('child_process')
 const MONGO_PORT = 50000
 const REDIS_PORT = 51000
 const KERNEL_PORT = 52000
+const jwt = require('jsonwebtoken')
 
 mongoose.connect(mongoConnectionString, { useNewUrlParser: true })
 mongoose.connection.on('error', (err) => {
@@ -17,8 +18,12 @@ mongoose.connection.on('disconnected', () => {
 })
 
 mongoose.connection.on('connected', () => {
-  console.log('Aplicação conectada ao banco de dados!');
+  console.log('Aplicação conectada ao banco de dados!')
 })
+
+const criarToken = (codeFarm) => {
+  return jwt.sign({ token: codeFarm }, `TOKENDOENV${codeFarm}`)
+}
 
 /* Verifica se tem farm que requer a orquestração de containers para novo  ambiente cloud */
 async function verifyNewFarm () {
@@ -28,10 +33,10 @@ async function verifyNewFarm () {
     if (data.length > 0) {
       console.log('NOVA FARM ENCONTRADA')
       console.log(data)
-      const codeFarm = 10
-      const token = 'asdasdasd'
+      const code = 10
+      const token = criarToken(code)
       const name = 'Fazenda X'
-      createDockerfileNewFarm(codeFarm, token, name)
+      createDockerfileNewFarm(code, token, name)
     } else {
       console.log('Sem novas farms cadastradas')
       console.log(error)
