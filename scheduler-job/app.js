@@ -1,14 +1,31 @@
-const Agenda = require('agenda')
-const mongoConnectionString = 'mongodb://database:27017'
-const agenda = new Agenda({ db: { address: mongoConnectionString, collection: 'schedulerJob' } })
-const mongoose = require('mongoose')
-const { exec } = require('child_process')
+require('dotenv').config()
+const URL_API_PORTAINER = process.env.URL_API_PORTAINER
+const TOKEN_API_PORTAINER = process.env.TOKEN_API_PORTAINER 
+const URL_MONGO = 'mongodb://' + process.env.URL_MONGO
+
 const MONGO_PORT = 50000
 const REDIS_PORT = 51000
 const KERNEL_PORT = 52000
 const jwt = require('jsonwebtoken')
 
-mongoose.connect(mongoConnectionString, { useNewUrlParser: true })
+const Agenda = require('agenda')
+const agenda = new Agenda({ db: { address: URL_MONGO, collection: 'schedulerJob' } })
+
+const axios = require('axios')
+const portainerApi = axios.create({
+  baseURL: URL_API_PORTAINER,
+  timeout: 2000,
+  headers: { 'X-API-Key': TOKEN_API_PORTAINER }
+});
+
+const { exec } = require('child_process')
+const fs = require('fs/promises')
+const FormData = require('form-data'); 
+
+const mongoose = require('mongoose')
+mongoose.set('strictQuery', false)
+mongoose.connect(URL_MONGO, { useNewUrlParser: true })
+
 mongoose.connection.on('error', (err) => {
   console.log('Erro na conexão com o banco de dados: ' + err)
 })
@@ -49,7 +66,7 @@ async function createDockerfileNewFarm (codeFarm, tokenFarm, nameFarm) {
   const mongoPort = MONGO_PORT + codeFarm
   const redisPort = REDIS_PORT + codeFarm
   const kernelPort = KERNEL_PORT + codeFarm
-  const dockerfileTitle = `farm-${codeFarm}.yml`
+  const dockerfileTitle = `farm_${codeFarm}.yml`
 
   const variablesEnv = `env CODE_FARM="${codeFarm}" MONGO_PORT="${mongoPort}" REDIS_PORT="${redisPort}" KERNEL_PORT="${kernelPort}" TOKEN="${tokenFarm}" NAME="${nameFarm}"`
   const commandCreateDockerfileNewFarm = variablesEnv + ` docker-compose -f DockerfileNewEnvironmentCloud.yml config > ${dockerfileTitle}`
@@ -71,7 +88,7 @@ async function createDockerfileNewFarm (codeFarm, tokenFarm, nameFarm) {
 
 /* Cria a stack da nova farm utilizando o Dockerfile da farm */
 async function createStackFarm (dockerfileTitle) {
-  const nameStack = `stack-${dockerfileTitle.split('.')[0]}`
+  const nameStack = `stack_${dockerfileTitle.split('.')[0]}`
   const commandCreateStackNewFarm = `docker stack deploy --compose-file ${dockerfileTitle} ${nameStack}`
   await exec(commandCreateStackNewFarm, async (error, stdout, stderr) => {
     if (error) {
@@ -85,6 +102,36 @@ async function createStackFarm (dockerfileTitle) {
     console.log(stdout)
     await console.log('Stack criada')
   })
+}
+
+function testPortainerAPI () {
+  portainerApi.get('/status')
+  .then(function (response) {
+    console.log(response.data);
+  })
+  .catch(function (error) {
+    console.log(error);
+  })
+
+  // Criação de stack via API do portainer
+  // https://app.swaggerhub.com/apis/portainer/portainer-ce/2.16.2#/stacks/StackCreate
+  /*
+    const formData = new FormData();
+    formData.append('method', 'file')
+    formData.append('File', await fs.readFile(dockerfileTitle));
+    formData.append('type', '1')
+    formData.append('endpointId', '1')
+    formData.append('Name', nameStack)
+    formData.append('SwarmID', '1')
+    const request_config = {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    };
+    
+
+    portainerApi.post('/stacks', formData)
+  */
 }
 
 /* Cria ou Atualiza SchedulerJob que verifica se tem farm nova para subir stack no cloud */

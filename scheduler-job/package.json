@@ -13,6 +13,8 @@
   "dependencies": {
     "agenda": "^4.2.1",
     "jsonwebtoken": "^8.5.1",
+    "axios": "^1.2.3",
+    "dotenv": "^16.0.3",
     "mongoose": "^6.2.4"
   },
   "devDependencies": {
