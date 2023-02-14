@@ -3,7 +3,7 @@ services:
   ecattle-mongo:
     image: mongo
     ports: 
-      - "${MONGO_PORT}:27017"
+      - ${MONGO_PORT}:27017
     deploy:
       replicas: 2
       restart_policy:
@@ -11,9 +11,9 @@ services:
       placement:
         constraints: [node.role == worker]
   ecattle-redis:
-    image: "redis:alpine"
+    image: redis:alpine
     ports:
-      - "${REDIS_PORT}:6379"
+      - ${REDIS_PORT}:6379
     deploy:
       replicas: 2
       restart_policy:
@@ -22,9 +22,9 @@ services:
         constraints: [node.role == worker]
   ecattle-kernel:
     command: ["sh", "-c", "npm i & npm run start"]
-    image: "ecattle/kernel-bigboxx:latest"
+    image: ecattle/kernel-bigboxx:latest
     ports:
-      - "${KERNEL_PORT}:3000"
+      - ${KERNEL_PORT}:3000
     environment:
       - DB_CLOUD=mongodb://ecattle-mongo/e-cattle
       - REDIS_CLOUD=ecattle-redis
