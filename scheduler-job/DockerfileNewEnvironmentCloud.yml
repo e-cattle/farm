@@ -29,6 +29,7 @@ services:
       - DB_CLOUD=mongodb://ecattle-mongo/e-cattle
       - REDIS_CLOUD=ecattle-redis
       - API_CLOUD=ecattle-cloud
+      - CODE_FARM=${CODE_FARM}
     deploy:
       replicas: 1
       restart_policy:
