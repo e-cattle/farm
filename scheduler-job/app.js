@@ -95,7 +95,7 @@ async function createDockerfileNewFarm (codeFarm, tokenFarm, nameFarm) {
   const kernelPort = KERNEL_PORT + codeFarm
   const dockerfileTitle = `farm_${codeFarm}.yml`
   const nameStack = `stack_${dockerfileTitle.split('.')[0]}`
-  const variablesEnv = `env CODE_FARM="${codeFarm}" MONGO_PORT="${mongoPort}" REDIS_PORT="${redisPort}" KERNEL_PORT="${kernelPort}" TOKEN="${tokenFarm}" NAME="${nameFarm}"`
+  const variablesEnv = `env CODE_FARM="${codeFarm}" MONGO_PORT="${mongoPort}" REDIS_PORT="${redisPort}" KERNEL_PORT="${kernelPort}" CLOUD_PK="${tokenFarm}" NAME="${nameFarm}"`
   const commandCreateDockerfileNewFarm = variablesEnv + ` docker compose --compatibility -f DockerfileNewEnvironmentCloud.yml config > ${dockerfileTitle}`
 
   await exec(commandCreateDockerfileNewFarm, async (error, stdout, stderr) => {
