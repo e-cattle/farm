@@ -1,4 +1,4 @@
-FROM node:lts-alpine
+FROM node:16.20-alpine
 WORKDIR /usr/src/app
 COPY . .
 RUN apk update && \

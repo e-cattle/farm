@@ -2,20 +2,20 @@ require('dotenv').config()
 const URL_API_PORTAINER = process.env.URL_API_PORTAINER
 const TOKEN_API_PORTAINER = process.env.TOKEN_API_PORTAINER
 const URL_MONGO = 'mongodb://' + process.env.URL_MONGO
-
+const SWARM_ID = process.env.SWARM_ID
 const MONGO_PORT = 50000
 const REDIS_PORT = 51000
 const KERNEL_PORT = 52000
 const jwt = require('jsonwebtoken')
 
 const Agenda = require('agenda')
-const agenda = new Agenda({ db: { address: URL_MONGO, collection: 'schedulerJob' } })
+const agenda = new Agenda({ db: { address: URL_MONGO + '/admin', collection: 'schedulerJob' } })
 
 const axios = require('axios')
 const portainerApi = axios.create({
   baseURL: URL_API_PORTAINER,
   timeout: 20000,
-  headers: { 'X-API-Key': TOKEN_API_PORTAINER }
+  headers: { 'X-API-Key': TOKEN_API_PORTAINER.replace(/(\r\n|\n|\r)/gm, '') }
 })
 
 const { exec } = require('child_process')
@@ -23,7 +23,7 @@ const fs = require('fs/promises')
 
 const mongoose = require('mongoose')
 mongoose.set('strictQuery', false)
-mongoose.connect(URL_MONGO, { useNewUrlParser: true })
+mongoose.connect(URL_MONGO + '/admin', { useNewUrlParser: true })
 
 mongoose.connection.on('error', (err) => {
   console.log('Erro na conexão com o banco de dados: ' + err)
@@ -70,17 +70,15 @@ const statusAPI = async () => {
 
 /* Verifica se tem farm que requer a orquestração de containers para novo  ambiente cloud */
 const verifyNewFarm = async () => {
-  await checkTemplates()
-  // ---------- BUSCA NO MONGO -----------  d
   const Farm = require('./model/farm')
-  Farm.find({ stackSwarmCreated: false }, (error, data) => {
-    if (data.length > 0) {
-      console.log('NOVA FARM ENCONTRADA')
-      console.log(data)
-      const code = 15
-      const token = criarToken(code)
-      const name = 'Fazenda X'
-      createDockerfileNewFarm(code, token, name)
+  Farm.find({ stackSwarmCreated: false }, async (error, farms) => {
+    if (farms.length > 0) {
+      for (const farm of farms) {
+        const code = farm.code
+        const token = await criarToken(code)
+        const name = farm.name
+        await createDockerfileNewFarm(code, token, name)
+      }
     } else {
       console.log('Sem novas farms cadastradas')
       console.log(error)
@@ -143,8 +141,10 @@ async function createStackFarm (dockerfileTitle, strStack) {
   stackContent = stackContent.replace(/name.*\n/, '')
   stackContent = 'version: "3.8"\n' + stackContent.replace(/["]/g, '')
 
-  await portainerApi.post('/stacks', { Name: strStack.name, SwarmID: '1', stackFileContent: stackContent }, formData).then(function (response) {
-    console.log(response)
+  await portainerApi.post('/stacks', { Name: strStack.name, SwarmID: SWARM_ID, stackFileContent: stackContent }, formData).then(function (response) {
+    console.log('Stack criada com sucesso!')
+    const Farm = require('./model/farm')
+    //ATUALIZAR FLAG DA FARM PARA STACKCRIADA: TRUE
   }).catch(function (error) {
     console.log(error)
     console.log('Erro ao criar stack via API')
@@ -154,13 +154,15 @@ async function createStackFarm (dockerfileTitle, strStack) {
 
 /* Cria ou Atualiza SchedulerJob que verifica se tem farm nova para subir stack no cloud */
 function createCloudEnvironment () {
-  agenda.define = ('new cloud environment', async (job) => {
-    await console.log(`Job run ${Date()}`)
+  agenda.define = ('verificaNovasFarms', async job => {
     await verifyNewFarm()
-  })(async function () {
-    await agenda.start()
-    await agenda.every('10 minutes', 'new cloud environment')
+    await console.log(`Job run ${Date()}`)
   })
+  (async function () {
+    await agenda.start()
+    await agenda.every('2 minutes', 'verificaNovasFarms')
+  })
+
 }
 
 createCloudEnvironment()
