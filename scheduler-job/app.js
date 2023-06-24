@@ -74,7 +74,7 @@ const verifyNewFarm = async () => {
   Farm.find({ stackSwarmCreated: false }, async (error, farms) => {
     if (farms.length > 0) {
       for (const farm of farms) {
-        const code = farm.code
+        const code = JSON.parse(JSON.stringify(farm)).code
         const token = await criarToken(code)
         const name = farm.name
         await createDockerfileNewFarm(code, token, name)
@@ -144,7 +144,14 @@ async function createStackFarm (dockerfileTitle, strStack) {
   await portainerApi.post('/stacks', { Name: strStack.name, SwarmID: SWARM_ID, stackFileContent: stackContent }, formData).then(function (response) {
     console.log('Stack criada com sucesso!')
     const Farm = require('./model/farm')
-    //ATUALIZAR FLAG DA FARM PARA STACKCRIADA: TRUE
+    Farm.findOneAndUpdate({ code:  strStack.env[0].CODE_FARM }, { $set: { stackSwarmCreated: true }}, async (error, farm) => {
+      if (farm) {
+        console.log('Flag de stackSwarmCreated atualizada com sucesso!');
+      } else {
+        console.log('Erro ao atualizar flag de stackSwarmCreated')
+        console.log(error)
+      }
+    })
   }).catch(function (error) {
     console.log(error)
     console.log('Erro ao criar stack via API')
@@ -152,20 +159,14 @@ async function createStackFarm (dockerfileTitle, strStack) {
   })
 }
 
-/* Cria ou Atualiza SchedulerJob que verifica se tem farm nova para subir stack no cloud */
-function createCloudEnvironment () {
-  agenda.define = ('verificaNovasFarms', async job => {
-    await verifyNewFarm()
-    await console.log(`Job run ${Date()}`)
-  })
-  (async function () {
-    await agenda.start()
-    await agenda.every('2 minutes', 'verificaNovasFarms')
-  })
+agenda.on('ready', function() {
+  agenda.start()
+  agenda.every("5 minutes", "verificaNovasFarms" );
+});
 
-}
-
-createCloudEnvironment()
+agenda.define( "verificaNovasFarms", async function() {
+  await verifyNewFarm();
+});
 
 /*
 TODO:
