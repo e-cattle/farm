@@ -134,7 +134,7 @@ async function createStackFarm (dockerfileTitle, strStack) {
     {
       type: 1,
       method: 'string',
-      endpointId: 1
+      endpointId: 2 //environment primary é ID 2 por default
     }
   }
   let stackContent = await fs.readFile(dockerfileTitle, { encoding: 'utf8' })
