@@ -30,6 +30,7 @@ services:
       - REDIS_CLOUD=ecattle-redis
       - API_CLOUD=ecattle-cloud
       - CODE_FARM=${CODE_FARM}
+      - JWT_SECRET=${JWT_SECRET}
     deploy:
       replicas: 1
       restart_policy:
