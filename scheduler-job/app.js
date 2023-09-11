@@ -3,6 +3,7 @@ const URL_API_PORTAINER = process.env.URL_API_PORTAINER
 const TOKEN_API_PORTAINER = process.env.TOKEN_API_PORTAINER
 const URL_MONGO = 'mongodb://' + process.env.URL_MONGO
 const SWARM_ID = process.env.SWARM_ID
+const JWT_SECRET = process.env.JWT_SECRET
 const MONGO_PORT = 50000
 const REDIS_PORT = 51000
 const KERNEL_PORT = 52000
@@ -38,7 +39,7 @@ mongoose.connection.on('connected', () => {
 })
 
 const criarToken = (codeFarm) => {
-  return jwt.sign({ token: codeFarm }, `TOKENDOENV${codeFarm}`)
+  return jwt.sign({ token: codeFarm }, `${JWT_SECRET}${codeFarm}`)
 }
 
 const checkStacks = async () => {
@@ -93,7 +94,7 @@ async function createDockerfileNewFarm (codeFarm, tokenFarm, nameFarm) {
   const kernelPort = KERNEL_PORT + codeFarm
   const dockerfileTitle = `farm_${codeFarm}.yml`
   const nameStack = `stack_${dockerfileTitle.split('.')[0]}`
-  const variablesEnv = `env JWT_SECRET="${process.env.JWT_SECRET}" CODE_FARM="${codeFarm}" MONGO_PORT="${mongoPort}" REDIS_PORT="${redisPort}" KERNEL_PORT="${kernelPort}" CLOUD_PK="${tokenFarm}" NAME="${nameFarm}"`
+  const variablesEnv = `env JWT_SECRET="${JWT_SECRET}" CODE_FARM="${codeFarm}" MONGO_PORT="${mongoPort}" REDIS_PORT="${redisPort}" KERNEL_PORT="${kernelPort}" CLOUD_PK="${tokenFarm}" NAME="${nameFarm}"`
   const commandCreateDockerfileNewFarm = variablesEnv + ` docker compose --compatibility -f DockerfileNewEnvironmentCloud.yml config > ${dockerfileTitle}`
 
   await exec(commandCreateDockerfileNewFarm, async (error, stdout, stderr) => {
@@ -110,6 +111,7 @@ async function createDockerfileNewFarm (codeFarm, tokenFarm, nameFarm) {
             MONGO_PORT: mongoPort,
             REDIS_PORT: redisPort,
             KERNEL_PORT: kernelPort,
+            JWT_SECRET: JWT_SECRET,
             TOKEN: tokenFarm,
             NAME: nameFarm
           }
@@ -144,7 +146,7 @@ async function createStackFarm (dockerfileTitle, strStack) {
   await portainerApi.post('/stacks', { Name: strStack.name, SwarmID: SWARM_ID, stackFileContent: stackContent }, formData).then(function (response) {
     console.log('Stack criada com sucesso!')
     const Farm = require('./model/farm')
-    Farm.findOneAndUpdate({ code:  strStack.env[0].CODE_FARM }, { $set: { stackSwarmCreated: true }}, async (error, farm) => {
+    Farm.findOneAndUpdate({ code: strStack.env[0].CODE_FARM }, { $set: { stackSwarmCreated: true }}, async (error, farm) => {
       if (farm) {
         console.log('Flag de stackSwarmCreated atualizada com sucesso!');
       } else {
